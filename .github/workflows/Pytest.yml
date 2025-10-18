@@ -26,4 +26,10 @@ jobs:
 
     - name: Run Pytest
       run: |
-        pytest -v --maxfail=3 --disable-warnings
+        pytest --junitxml=unit-results.xml -v --maxfail=3 --disable-warnings
+
+    - name: Upload Unit Test Results
+      uses: actions/upload-artifact@v4
+      with:
+         name: unit-test-results
+         path: unit-results.xml
