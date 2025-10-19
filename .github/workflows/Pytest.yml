@@ -24,6 +24,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Start Flask app
+      run: |
+        nohup python app.py &
+        sleep 5
+        
     - name: Run Pytest
       run: |
         pytest test_FR_001.py test_FR_002.py test_FR_003.py test_FR_004.py test_FR_005.py test_FR_006.py --junitxml=unit-results.xml -v --maxfail=3 --disable-warnings
