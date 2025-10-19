@@ -26,7 +26,7 @@ jobs:
 
     - name: Run Pytest
       run: |
-        pytest test_FR_001.py, test_FR_002.py, test_FR_003.py, test_FR_004.py, test_FR_005.py, test_FR_006.py --junitxml=unit-results.xml -v --maxfail=3 --disable-warnings
+        pytest test_FR_001.py test_FR_002.py test_FR_003.py test_FR_004.py test_FR_005.py test_FR_006.py --junitxml=unit-results.xml -v --maxfail=3 --disable-warnings
 
     - name: Upload Unit Test Results
       uses: actions/upload-artifact@v4
