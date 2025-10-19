@@ -1,5 +1,7 @@
 import pytest
-from app import app, BOOKS
+from app import app
+from models import Book, Cart, Order
+from app import get_current_user
 
 @pytest.fixture
 def client():
@@ -22,20 +24,15 @@ def test_user_can_create_account(client):
     assert b'Account created successfully' in response.data or b'Login to Your Account' in response.data
     assert b'Hello, Test User!' in response.data
 
-# FR-006 TC006-02: Verify users can log in to view their past orders, including details of the books purchased
+# FR-006 TC006-02: Verify users can log in to view their past orders
 
-from models import Book, Cart, Order
-from app import get_current_user
-
-def test_demo_user_places_order_and_sees_it_on_account_page(client):
-    # Step 1: Log in as demo user
+def test_demo_user_places_order_and_sees_it_as_past_order(client):
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
         'password': 'demo123'
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Step 2: Simulate placing an order
     demo_user = get_current_user()
     cart = Cart()
     book1 = Book("1984", "Dystopia", 8.99, "1984.jpg")
@@ -50,7 +47,6 @@ def test_demo_user_places_order_and_sees_it_on_account_page(client):
                   shipping_info=shipping_info, payment_info=payment_info, total_amount=total)
     demo_user.add_order(order)
 
-    # Step 3: Visit account page and verify order
     response = client.get('/account')
     assert response.status_code == 200
     assert b'Order History' in response.data
@@ -63,14 +59,12 @@ def test_demo_user_places_order_and_sees_it_on_account_page(client):
 # FR-006 TC006-03: Verify users can update their name in their registered account
 
 def test_user_can_update_name_only(client):
-    # Log in
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
         'password': 'demo123'
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Update name only
     response = client.post('/update-profile', data={
         'name': 'New Name',
         'address': '',
@@ -82,14 +76,12 @@ def test_user_can_update_name_only(client):
 # FR-006 TC006-04: Verify that user can update their address in their registered account
 
 def test_user_can_update_address_only(client):
-    # Log in
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
         'password': 'demo123'
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Update address only
     response = client.post('/update-profile', data={
         'name': '',
         'address': '123 New Test Road',
@@ -101,14 +93,12 @@ def test_user_can_update_address_only(client):
 # FR-006 TC006-05: Verify that user can update their password in their registered account
 
 def test_user_can_update_password_only(client):
-    # Log in
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
         'password': 'demo123'
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Update password only
     response = client.post('/update-profile', data={
         'name': '',
         'address': '',
@@ -116,7 +106,6 @@ def test_user_can_update_password_only(client):
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Log out and log in with new password
     client.get('/logout', follow_redirects=True)
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
@@ -127,30 +116,25 @@ def test_user_can_update_password_only(client):
 # FR-006 TC006-06: Verify that the user can't change their email address
 
 def test_user_cannot_change_email_address(client):
-    # Step 1: Log in as demo user
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
         'password': 'demo123'
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Step 2: Attempt to change email via POST (should be ignored)
     response = client.post('/update-profile', data={
         'name': 'Demo User',
         'address': '123 Demo Street',
-        'email': 'newemail@example.com',  # Should be ignored
-        'new_password': ''
+        'email': 'newtest@test.com',
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Step 3: Confirm email is still the original
     assert b'demo@bookstore.com' in response.data
-    assert b'newemail@example.com' not in response.data
+    assert b'newtest@test.com' not in response.data
 
 # FR-006 TC006-07: Verify that user can log out of the website
 
 def test_user_can_log_out(client):
-    # Step 1: Log in as demo user
     response = client.post('/login', data={
         'email': 'demo@bookstore.com',
         'password': 'demo123'
@@ -158,10 +142,7 @@ def test_user_can_log_out(client):
     assert response.status_code == 200
     assert b'Account' in response.data
 
-    # Step 2: Log out
     response = client.get('/logout', follow_redirects=True)
     assert response.status_code == 200
-
-    # Step 3: Confirm user is redirected and no longer sees account links
     assert b'Login' in response.data or b'Sign In' in response.data
     assert b'Account' not in response.data

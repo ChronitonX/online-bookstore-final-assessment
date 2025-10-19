@@ -32,8 +32,8 @@ def test_email_sent_after_successful_payment(client):
         assert response.status_code == 200
         assert mock_send_email.called
         args, kwargs = mock_send_email.call_args
-        assert args[0] == 'test@test.com'  # Email recipient
-        assert hasattr(args[1], 'order_id')  # Order object passed
+        assert args[0] == 'test@test.com'
+        assert hasattr(args[1], 'order_id')
         assert b'Confirmation Email Sent' in response.data
         assert b'test@test.com' in response.data
 
@@ -41,7 +41,7 @@ def test_email_sent_after_successful_payment(client):
 
 def test_user_can_view_order_details_after_payment(client):
     cart.clear()
-    cart.add_book(BOOKS[0], 2)  # Add 2 copies of one book
+    cart.add_book(BOOKS[0], 2)
 
     response = client.post('/process-checkout', data={
         'name': 'Test User',
@@ -50,7 +50,7 @@ def test_user_can_view_order_details_after_payment(client):
         'city': 'Test City',
         'zip_code': '12345',
         'payment_method': 'credit_card',
-        'card_number': '4242424242424242',
+        'card_number': '1234567812345678',
         'expiry_date': '12/25',
         'cvv': '123',
         'discount_code': ''

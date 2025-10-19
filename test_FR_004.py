@@ -12,7 +12,7 @@ def client():
 
 def test_user_can_input_payment_information(client):
     cart.clear()
-    cart.add_book(BOOKS[0], 1)  # Add one book to cart
+    cart.add_book(BOOKS[0], 1)
 
     response = client.post('/process-checkout', data={
         'name': 'Test User',
@@ -56,9 +56,9 @@ def test_successful_transaction_redirects_to_confirmation(client):
     assert b'Thank you for your purchase' in response.data
     assert b'Payment Method: Credit Card' in response.data
 
-# FR-004 TC004-03: Verify unsuccessful transaction displays error message with incorrect card number
+# FR-004 TC004-03: Verify incorrect card number
 
-def test_unsuccessful_transaction_shows_error_message(client):
+def test_incorrect_payment_card_number(client):
     cart.clear()
     cart.add_book(BOOKS[0], 1)
 
@@ -69,7 +69,7 @@ def test_unsuccessful_transaction_shows_error_message(client):
         'city': 'Test City',
         'zip_code': '12345',
         'payment_method': 'credit_card',
-        'card_number': '1234567812341111',  # triggers mock failure
+        'card_number': '1234567812341111',  # 1111 is set to fail
         'expiry_date': '12/25',
         'cvv': '123',
         'discount_code': ''
@@ -119,7 +119,7 @@ def test_unsuccessful_transaction_invalid_cvv(client):
         'payment_method': 'credit_card',
         'card_number': '1234567812345678',
         'expiry_date': '12/25',
-        'cvv': '',  # Missing or invalid CVV
+        'cvv': '',
         'discount_code': ''
     }, follow_redirects=True)
 

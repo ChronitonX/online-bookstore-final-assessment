@@ -19,12 +19,9 @@ def test_book_browsing(client):
 # FR-002 TC002-15: Verify dynamic pricing calculations on homepage - wrong test case
 
 def test_homepage_dynamic_pricing(client):
-    """Verify that book prices are correctly displayed on the homepage."""
     response = client.get('/')
     assert response.status_code == 200
 
-    # Check that each book's price appears in the rendered HTML
     for book in BOOKS:
         price_str = f"${book.price:.2f}".encode()
         assert price_str in response.data
-

@@ -31,7 +31,6 @@ def test_checkout_order_summary_empty_cart(client):
     assert response.status_code == 200
     assert b'Your cart is empty' in response.data or b'No items in cart' in response.data
 
-
 # FR-003 TC003-03: Verify shipping detail fields accept input
 
 def test_shipping_fields_accept_input(client):
@@ -68,8 +67,6 @@ def test_shipping_name_required(client):
     assert response.status_code == 200
     assert b'Full Name *' in response.data
     assert b'Please fill in the name field' in response.data
-
-
 
 # FR-003 TC003-05: Verify shipping details ‘address’ field has been filled
 
@@ -109,9 +106,7 @@ def test_shipping_email_required(client):
     assert b'Email Address *' in response.data
     assert b'Please fill in the email field' in response.data
 
-
-
-# FR-003 TC003-07: Verify PayPal payment method can be selected
+# FR-003 TC003-07: Verify PayPal payment method can be selected - not working
 
 def test_paypal_selection(client):
     cart.clear()
@@ -148,11 +143,11 @@ def test_discount_code_applied(client):
 
     assert response.status_code == 200
     assert b'Discount Code:' in response.data
-    assert b'Discount applied' in response.data  # Assuming flash message
+    assert b'Discount applied' in response.data # Check this
 
-# FR-003 TC003-09: Verify validation of payment details
+# FR-003 TC003-09: Verify payment method has been selected - not working
 
-def test_payment_details_validation(client):
+def test_payment_method_selected(client):
     cart.clear()
     cart.add_book(BOOKS[0], 1)
 
