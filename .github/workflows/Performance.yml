@@ -1,0 +1,43 @@
+name: Performance and Profiling
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install snakeviz
+
+      - name: Run cProfile
+        run: |
+          python cprofile_online_bookstore.py
+          ls -lh *.prof *.txt || true
+
+      - name: Run timeit
+        run: |
+          python test_timeit.py
+          ls -lh *.csv || true
+
+      - name: Upload profiling artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: profiling-results
+          path: |
+            *.prof
+            *.txt
+            *.csv

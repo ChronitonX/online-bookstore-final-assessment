@@ -1,0 +1,36 @@
+name: Bandit Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  bandit-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit scan
+        run: |
+          mkdir -p bandit_results
+          bandit -r . -f json -o bandit_results/bandit_report.json
+          bandit -r . -f html -o bandit_results/bandit_report.html
+          bandit -r . -f csv -o bandit_results/bandit_report.csv
+
+      - name: Upload Bandit reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: bandit-security-reports
+          path: bandit_results/
