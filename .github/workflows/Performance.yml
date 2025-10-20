@@ -1,4 +1,4 @@
-name: Performance and Profiling
+name: Run Performance and Profiling
 
 on:
   push:

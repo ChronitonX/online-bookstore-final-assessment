@@ -1,4 +1,4 @@
-name: Bandit Security Scan
+name: Run Bandit Security Scan
 
 on:
   push:
