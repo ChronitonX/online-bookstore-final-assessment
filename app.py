@@ -2,6 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from models import Book, Cart, User, Order, PaymentGateway, EmailService
 import uuid
 
+import re
+
+def is_strong_password(password):
+    """Check if password meets strength requirements"""
+    return (
+        len(password) >= 8 and
+        re.search(r"[A-Z]", password) and
+        re.search(r"[a-z]", password) and
+        re.search(r"\d", password) and
+        re.search(r"[!@#$%^&*(),.?\":{}|<>]", password)
+    )
+
+
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session management
 
@@ -327,4 +341,4 @@ def update_profile():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
